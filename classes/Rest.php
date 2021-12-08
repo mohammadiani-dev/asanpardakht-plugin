@@ -40,12 +40,12 @@ class Rest{
 
     public function search_users(WP_REST_Request $request){
 
-        // if (!current_user_can('administrator')) {
-        //     wp_send_json([
-        //         'messege' => "You don't have permission to access!",
-        //         'code' => 403,
-        //     ], 403);
-        // }
+        if (!current_user_can('administrator')) {
+            wp_send_json([
+                'messege' => "You don't have permission to access!",
+                'code' => 403,
+            ], 403);
+        }
 
         if (!isset($request['query'])) {
             wp_send_json([
