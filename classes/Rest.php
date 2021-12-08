@@ -11,7 +11,7 @@ class Rest{
 
     public function rest_api_creator(){
 
-        $this->create_route('products/search','search_products','POST');
+        $this->create_route('products/search','search_products');
 
     }
 
@@ -32,7 +32,7 @@ class Rest{
             ], 403);
         }
 
-        wp_send_json(Products::searchProducts($request['text']));
+        wp_send_json(Products::searchProducts($request['query']));
 
     }
 

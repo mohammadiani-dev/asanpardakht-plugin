@@ -10,7 +10,7 @@ class Products{
                 'post_type' => array('product','product_variation'),
                 'orderby' => 'title',
                 'order' => 'ASC',
-                'numberposts' => 200,
+                'numberposts' => 20,
                 's' => $search_string,
             );
 
