@@ -12,6 +12,7 @@ class Rest{
     public function rest_api_creator(){
 
         $this->create_route('products/search','search_products');
+        $this->create_route('users/search','search_users');
 
     }
 
@@ -25,6 +26,20 @@ class Rest{
 
     public function search_products(WP_REST_Request $request){
 
+        if (!current_user_can('administrator')) {
+            wp_send_json([
+                'messege' => "You don't have permission to access!",
+                'code' => 403,
+            ], 403);
+        }
+
+        wp_send_json(Funcs::searchProducts($request['query']));
+
+    }
+
+
+    public function search_users(WP_REST_Request $request){
+
         // if (!current_user_can('administrator')) {
         //     wp_send_json([
         //         'messege' => "You don't have permission to access!",
@@ -32,7 +47,14 @@ class Rest{
         //     ], 403);
         // }
 
-        wp_send_json(Funcs::searchProducts($request['query']));
+        if (!isset($request['query'])) {
+            wp_send_json([
+                'messege' => "query not set!",
+                'code' => 401,
+            ], 401);
+        }
+
+        wp_send_json(Funcs::searchUsers($request['query']));
 
     }
 
