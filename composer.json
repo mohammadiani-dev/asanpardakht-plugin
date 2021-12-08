@@ -1,0 +1,15 @@
+{
+    "name": "mohammadiani/asanpardakht",
+    "authors": [
+        {
+            "name": "mohammadiani",
+            "email": "yoosef.m.1374@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "APAPI\\": "classes/"
+        }
+    },
+    "require": {}
+}
