@@ -29,16 +29,16 @@ class Products{
                                 $atts_trimed[] = trim($att);
                             }
                             $return[] = array(
-                                'ID' => (int)$child,
+                                'id' => (int)$child,
                                 'title' => trim($title_ex[0]),
-                                'atts' => $atts_trimed,
+                                'attributes' => $atts_trimed,
                             );
                         }
                     } else {
                         $return[] = array(
-                            'ID' => (int)$post->get_ID(),
+                            'id' => (int)$post->get_ID(),
                             'title' => trim($post->get_name()),
-                            'atts' => [],
+                            'attributes' => [],
                         );
                     }
                 }
