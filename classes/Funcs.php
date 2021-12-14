@@ -1,7 +1,21 @@
 <?php namespace APAPI;
 
+use TotalPollVendors\TotalCore\Helpers\Strings;
+use WP_User;
+
 class Funcs{
 
+    
+    public static function get_umeta($user_id,$type){
+        return get_user_meta( $user_id, $type , true );
+    }
+    
+    public static function is_set($var){
+        if(!empty($var) && isset($var)){
+            return true;
+        }
+        return false;
+    }
 
     public static function searchProducts($str){
             $return = array();
@@ -97,26 +111,23 @@ class Funcs{
         return $return;
     }
 
-    
-    public static function is_set($var){
-        if(!empty($var) && isset($var)){
-            return true;
-        }
-        return false;
-    }
-
-    
-
     public static function get_user_zipcode($user_id){
         return self::get_umeta($user_id,'billing_postcode');
     }
 
     public static function get_user_address($user_id){
 
-        $state = self::get_umeta($user_id,'billing_state');
-        $city = self::get_umeta($user_id,'billing_city');
+        $as_address = get_user_meta($user_id, 'as_order_address', true);
+
+        if(self::is_set($as_address)){
+            return $as_address;
+        }
+
+        $state    = self::get_umeta($user_id,'billing_state');
+        $city     = self::get_umeta($user_id,'billing_city');
         $address1 = self::get_umeta($user_id,'billing_address_1');
         $address2 = self::get_umeta($user_id,'billing_address_2');
+
 
         $return = [];
         
@@ -135,10 +146,6 @@ class Funcs{
 
         return implode("-",$return);
 
-    }
-
-    public static function get_umeta($user_id,$type){
-        return get_user_meta( $user_id, $type , true );
     }
 
     public static function get_user_mobile($user_id , $order=null){
@@ -180,6 +187,69 @@ class Funcs{
 
         return null;
     }
+
+    public static function addUser($data){
+
+        $fullname = esc_html($data['fullname']);
+        $mobile   = esc_html($data['mobile']);
+        $zipcode  = esc_html($data['zipcode']);
+        $address  = esc_html($data['address']);
+
+        $user_login = sanitize_user( $mobile );
+        if(username_exists( $user_login )){
+            return [
+                'result' => "user has exist!",
+                'code' => 401,
+            ];
+        }
+        
+        $user_pass = wp_generate_password( 8, false );
+        $user_id   = wp_create_user( $user_login , $user_pass );
+
+        if(! $user_id || is_wp_error( $user_id )){
+            return [
+                'result' => 'wordpress create user error!',
+                'code' => 500,
+            ];
+        }
+        
+        update_user_meta($user_id, 'billing_phone'  , $mobile);
+        update_user_meta($user_id, 'as_order_address', $address);
+        update_user_meta($user_id, 'billing_postcode', $zipcode);
+        update_user_meta($user_id, 'as_user_fullname', $fullname);
+        update_user_meta($user_id, 'display_name', $fullname );
+        
+        update_user_meta( $user_id, 'default_password_nag', true );
+
+        do_action( 'register_new_user', $user_id );
+
+        return [
+            'result' => $user_id,
+            'code' => 200,
+        ];
+    }
+
+    public static function updateUser($user_id , $data){
+
+        if(self::is_set(    trim($data['mobile'])     )){
+            update_user_meta($user_id, 'billing_phone'  , trim($data['mobile']) );
+        }
+
+        if(self::is_set(    trim($data['address'])     )){
+            update_user_meta($user_id, 'as_order_address', trim($data['address']) );
+        }
+
+        if(self::is_set(    trim($data['zipcode'])     )){
+            update_user_meta($user_id, 'billing_postcode', trim($data['zipcode']) );
+        }
+
+        if(self::is_set(    trim($data['zipcode'])     )){
+            update_user_meta($user_id, 'as_user_fullname', trim($data['fullname']) );
+            update_user_meta($user_id, 'display_name', trim($data['fullname']) );
+        }
+
+    }
+
 
 
 
