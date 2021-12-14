@@ -97,7 +97,7 @@ class Funcs{
                 $mobile = self::get_user_mobile($user->ID);           
                 $return[] = array(
                     'id' => (int)$user->ID,
-                    'image' => $avatar,
+                    // 'image' => $avatar,
                     'fullname' => $user->display_name,
                     'username' => $user->user_login,
                     'mobile' => null !== $mobile ? $mobile : "",
