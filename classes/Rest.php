@@ -14,8 +14,8 @@ class Rest{
         $this->create_route('products/search','search_products');
         $this->create_route('users/search','search_users');
         $this->create_route('users/add','add_user','POST');
-        $this->create_route('users/delete','delete_user','POST');
-        $this->create_route('users/update','update_user','POST');
+        $this->create_route('users/delete','delete_user','DELETE');
+        $this->create_route('users/update','update_user','PATCH');
     }
 
     public function create_route($namespace,$callback,$method = 'GET'){
